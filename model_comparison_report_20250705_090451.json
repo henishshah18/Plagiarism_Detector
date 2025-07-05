@@ -1,0 +1,420 @@
+{
+  "timestamp": "20250705_090451",
+  "test_cases": {
+    "identical_texts": {
+      "description": "Identical texts (should be 100% similar)",
+      "texts": [
+        "The quick brown fox jumps over the lazy dog.",
+        "The quick brown fox jumps over the lazy dog.",
+        "Machine learning is a subset of artificial intelligence."
+      ],
+      "expected_clones": 1
+    },
+    "paraphrased_texts": {
+      "description": "Paraphrased content (should be highly similar)",
+      "texts": [
+        "Artificial intelligence is the simulation of human intelligence in machines.",
+        "AI refers to the simulation of human intelligence in computer systems.",
+        "Machine learning uses algorithms to analyze data and make predictions.",
+        "ML employs computational methods to examine information and forecast outcomes."
+      ],
+      "expected_clones": 2
+    },
+    "different_topics": {
+      "description": "Different topics (should be low similarity)",
+      "texts": [
+        "The weather is sunny today with clear blue skies.",
+        "Quantum computing uses quantum mechanical phenomena for computation.",
+        "The recipe calls for two cups of flour and one egg.",
+        "Basketball is a popular sport played with two teams."
+      ],
+      "expected_clones": 0
+    },
+    "technical_content": {
+      "description": "Technical/scientific content",
+      "texts": [
+        "Neural networks are computational models inspired by biological neurons.",
+        "Deep learning networks are computational architectures modeled after brain neurons.",
+        "Photosynthesis is the process by which plants convert sunlight into energy.",
+        "The mitochondria is the powerhouse of the cell."
+      ],
+      "expected_clones": 1
+    },
+    "short_vs_long": {
+      "description": "Mixed length texts",
+      "texts": [
+        "AI is smart.",
+        "Artificial intelligence represents the development of computer systems that can perform tasks typically requiring human intelligence, such as learning, reasoning, problem-solving, and pattern recognition.",
+        "Cars are fast.",
+        "Automotive vehicles are designed for rapid transportation."
+      ],
+      "expected_clones": 0
+    }
+  },
+  "results": {
+    "sentence_transformers": {
+      "model_name": "sentence_transformers",
+      "total_tests": 5,
+      "successful_tests": 5,
+      "failed_tests": 0,
+      "average_processing_time": 0.13383970260620118,
+      "accuracy_score": 0.7,
+      "test_case_results": {
+        "identical_texts": {
+          "processing_time": 0.12466740608215332,
+          "similarity_matrix": [
+            [
+              0.9999996423721313,
+              0.9999996423721313,
+              0.0015284903347492218
+            ],
+            [
+              0.9999996423721313,
+              0.9999996423721313,
+              0.0015284903347492218
+            ],
+            [
+              0.0015284903347492218,
+              0.0015284903347492218,
+              1.0
+            ]
+          ],
+          "detected_clones": 1,
+          "expected_clones": 1,
+          "accuracy": 1.0,
+          "clone_details": [
+            {
+              "text1_index": 0,
+              "text2_index": 1,
+              "similarity": 0.9999996423721313
+            }
+          ]
+        },
+        "paraphrased_texts": {
+          "processing_time": 0.1446077823638916,
+          "similarity_matrix": [
+            [
+              1.0,
+              0.8941202163696289,
+              0.4931012988090515,
+              0.3408024311065674
+            ],
+            [
+              0.8941202163696289,
+              1.000000238418579,
+              0.46777790784835815,
+              0.3346656262874603
+            ],
+            [
+              0.4931012988090515,
+              0.46777790784835815,
+              1.0000001192092896,
+              0.6708837747573853
+            ],
+            [
+              0.3408024311065674,
+              0.3346656262874603,
+              0.6708837747573853,
+              1.0000004768371582
+            ]
+          ],
+          "detected_clones": 1,
+          "expected_clones": 2,
+          "accuracy": 0.5,
+          "clone_details": [
+            {
+              "text1_index": 0,
+              "text2_index": 1,
+              "similarity": 0.8941202163696289
+            }
+          ]
+        },
+        "different_topics": {
+          "processing_time": 0.12964534759521484,
+          "similarity_matrix": [
+            [
+              1.000000238418579,
+              -0.05759398639202118,
+              0.004866691306233406,
+              0.03838127851486206
+            ],
+            [
+              -0.05759398639202118,
+              1.0,
+              0.06946530938148499,
+              0.08201633393764496
+            ],
+            [
+              0.004866691306233406,
+              0.06946530938148499,
+              1.0,
+              -0.02502347156405449
+            ],
+            [
+              0.03838127851486206,
+              0.08201633393764496,
+              -0.02502347156405449,
+              1.0000001192092896
+            ]
+          ],
+          "detected_clones": 0,
+          "expected_clones": 0,
+          "accuracy": 1.0,
+          "clone_details": []
+        },
+        "technical_content": {
+          "processing_time": 0.13064813613891602,
+          "similarity_matrix": [
+            [
+              0.9999999403953552,
+              0.7374587655067444,
+              0.1478905975818634,
+              0.20533496141433716
+            ],
+            [
+              0.7374587655067444,
+              0.9999998807907104,
+              0.08145730197429657,
+              0.15106552839279175
+            ],
+            [
+              0.1478905975818634,
+              0.08145730197429657,
+              1.000000238418579,
+              0.32110360264778137
+            ],
+            [
+              0.20533496141433716,
+              0.15106552839279175,
+              0.32110360264778137,
+              1.0
+            ]
+          ],
+          "detected_clones": 0,
+          "expected_clones": 1,
+          "accuracy": 0.0,
+          "clone_details": []
+        },
+        "short_vs_long": {
+          "processing_time": 0.13962984085083008,
+          "similarity_matrix": [
+            [
+              1.0000001192092896,
+              0.60738205909729,
+              0.2023967057466507,
+              0.18480926752090454
+            ],
+            [
+              0.60738205909729,
+              1.0,
+              0.04672100394964218,
+              0.1664656698703766
+            ],
+            [
+              0.2023967057466507,
+              0.04672100394964218,
+              1.0000001192092896,
+              0.661615252494812
+            ],
+            [
+              0.18480926752090454,
+              0.1664656698703766,
+              0.661615252494812,
+              1.0000001192092896
+            ]
+          ],
+          "detected_clones": 0,
+          "expected_clones": 0,
+          "accuracy": 1.0,
+          "clone_details": []
+        }
+      },
+      "performance_metrics": {
+        "success_rate": 1.0,
+        "average_processing_time": 0.13383970260620118,
+        "accuracy_score": 0.7
+      }
+    },
+    "openai": {
+      "model_name": "openai",
+      "total_tests": 5,
+      "successful_tests": 5,
+      "failed_tests": 0,
+      "average_processing_time": 5.191191530227661,
+      "accuracy_score": 0.6,
+      "test_case_results": {
+        "identical_texts": {
+          "processing_time": 7.261470794677734,
+          "similarity_matrix": [
+            [
+              0.999999999999999,
+              0.999999999999999,
+              0.019136385330985824
+            ],
+            [
+              0.999999999999999,
+              0.999999999999999,
+              0.019136385330985824
+            ],
+            [
+              0.019136385330985824,
+              0.019136385330985824,
+              0.9999999999999994
+            ]
+          ],
+          "detected_clones": 1,
+          "expected_clones": 1,
+          "accuracy": 1.0,
+          "clone_details": [
+            {
+              "text1_index": 0,
+              "text2_index": 1,
+              "similarity": 0.999999999999999
+            }
+          ]
+        },
+        "paraphrased_texts": {
+          "processing_time": 5.105326890945435,
+          "similarity_matrix": [
+            [
+              0.9999999999999998,
+              0.773070127682229,
+              0.42096451775362065,
+              0.2668538193924141
+            ],
+            [
+              0.773070127682229,
+              1.000000000000001,
+              0.3653980227299746,
+              0.3092003848804503
+            ],
+            [
+              0.42096451775362065,
+              0.3653980227299746,
+              1.0000000000000004,
+              0.5870856204998209
+            ],
+            [
+              0.2668538193924141,
+              0.3092003848804503,
+              0.5870856204998209,
+              0.9999999999999997
+            ]
+          ],
+          "detected_clones": 0,
+          "expected_clones": 2,
+          "accuracy": 0.0,
+          "clone_details": []
+        },
+        "different_topics": {
+          "processing_time": 4.495006799697876,
+          "similarity_matrix": [
+            [
+              1.0000000000000013,
+              0.00016707191272468704,
+              0.044732303737618766,
+              0.09306305869966175
+            ],
+            [
+              0.00016707191272468704,
+              1.0000000000000009,
+              0.07856181772180372,
+              -0.002117083967530447
+            ],
+            [
+              0.044732303737618766,
+              0.07856181772180372,
+              1.0000000000000004,
+              0.17038812035936585
+            ],
+            [
+              0.09306305869966175,
+              -0.002117083967530447,
+              0.17038812035936585,
+              1.0000000000000007
+            ]
+          ],
+          "detected_clones": 0,
+          "expected_clones": 0,
+          "accuracy": 1.0,
+          "clone_details": []
+        },
+        "technical_content": {
+          "processing_time": 4.940216302871704,
+          "similarity_matrix": [
+            [
+              0.9999999999999997,
+              0.7276435396145648,
+              0.08750138663515018,
+              0.11441327698602814
+            ],
+            [
+              0.7276435396145648,
+              1.0,
+              0.07955572912385218,
+              0.11110070861437274
+            ],
+            [
+              0.08750138663515018,
+              0.07955572912385218,
+              1.0000000000000002,
+              0.24862006101416004
+            ],
+            [
+              0.11441327698602814,
+              0.11110070861437274,
+              0.24862006101416004,
+              1.0000000000000004
+            ]
+          ],
+          "detected_clones": 0,
+          "expected_clones": 1,
+          "accuracy": 0.0,
+          "clone_details": []
+        },
+        "short_vs_long": {
+          "processing_time": 4.153936862945557,
+          "similarity_matrix": [
+            [
+              1.0000000000000009,
+              0.5161027035344071,
+              0.2553931342899798,
+              0.16017220054515735
+            ],
+            [
+              0.5161027035344071,
+              0.9999999999999999,
+              0.08184511753084059,
+              0.14747508347033023
+            ],
+            [
+              0.2553931342899798,
+              0.08184511753084059,
+              1.0000000000000007,
+              0.5457068146910409
+            ],
+            [
+              0.16017220054515735,
+              0.14747508347033023,
+              0.5457068146910409,
+              1.0
+            ]
+          ],
+          "detected_clones": 0,
+          "expected_clones": 0,
+          "accuracy": 1.0,
+          "clone_details": []
+        }
+      },
+      "performance_metrics": {
+        "success_rate": 1.0,
+        "average_processing_time": 5.191191530227661,
+        "accuracy_score": 0.6
+      }
+    }
+  },
+  "summary": {
+    "total_models_tested": 2,
+    "total_test_cases": 5
+  }
+}
