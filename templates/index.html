@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plagiarism Detector - Semantic Similarity Analyzer</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .main-content {
+            padding: 30px;
+        }
+
+        .section {
+            margin-bottom: 30px;
+        }
+
+        .section h2 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 1.5em;
+        }
+
+        .text-inputs {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .text-input-group {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+        }
+
+        .text-input-group label {
+            min-width: 60px;
+            font-weight: 600;
+            color: #555;
+            padding-top: 10px;
+        }
+
+        .text-input-group textarea {
+            flex: 1;
+            min-height: 100px;
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-family: inherit;
+            font-size: 14px;
+            resize: vertical;
+            transition: border-color 0.3s ease;
+        }
+
+        .text-input-group textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .text-input-group .remove-btn {
+            background: #ff4757;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            cursor: pointer;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-top: 5px;
+        }
+
+        .text-input-group .remove-btn:hover {
+            background: #ff3838;
+        }
+
+        .add-text-btn {
+            background: #2ed573;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 10px;
+            transition: background-color 0.3s ease;
+        }
+
+        .add-text-btn:hover {
+            background: #26d467;
+        }
+
+        .model-selection {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .model-checkbox {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: #f8f9fa;
+            padding: 12px 16px;
+            border-radius: 8px;
+            border: 2px solid #e0e0e0;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .model-checkbox:hover {
+            background: #e9ecef;
+            border-color: #667eea;
+        }
+
+        .model-checkbox input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+
+        .model-checkbox label {
+            cursor: pointer;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .analyze-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 8px;
+            font-size: 18px;
+            cursor: pointer;
+            width: 100%;
+            transition: transform 0.3s ease;
+        }
+
+        .analyze-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .analyze-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .results {
+            margin-top: 30px;
+        }
+
+        .model-result {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-left: 4px solid #667eea;
+        }
+
+        .model-result h3 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 1.3em;
+        }
+
+        .model-info {
+            background: #e9ecef;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 15px;
+            font-size: 14px;
+            color: #555;
+        }
+
+        .similarity-matrix {
+            overflow-x: auto;
+            margin-bottom: 20px;
+        }
+
+        .similarity-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+
+        .similarity-table th,
+        .similarity-table td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: center;
+        }
+
+        .similarity-table th {
+            background: #667eea;
+            color: white;
+            font-weight: 600;
+        }
+
+        .similarity-cell {
+            font-weight: 600;
+        }
+
+        .similarity-high {
+            background: #ff4757;
+            color: white;
+        }
+
+        .similarity-medium {
+            background: #ffa726;
+            color: white;
+        }
+
+        .similarity-low {
+            background: #26d467;
+            color: white;
+        }
+
+        .clones-section {
+            margin-top: 15px;
+        }
+
+        .clone-item {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 5px;
+            padding: 15px;
+            margin-bottom: 10px;
+        }
+
+        .clone-item .similarity-score {
+            font-weight: bold;
+            color: #e17055;
+            font-size: 1.1em;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 20px;
+            color: #666;
+        }
+
+        .error {
+            background: #ffebee;
+            color: #c62828;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border-left: 4px solid #c62828;
+        }
+
+        .documentation {
+            background: #f0f8ff;
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 30px;
+            border-left: 4px solid #4682b4;
+        }
+
+        .documentation h3 {
+            color: #4682b4;
+            margin-bottom: 15px;
+        }
+
+        .documentation ul {
+            padding-left: 20px;
+        }
+
+        .documentation li {
+            margin-bottom: 8px;
+            color: #555;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                margin: 10px;
+            }
+
+            .main-content {
+                padding: 20px;
+            }
+
+            .header h1 {
+                font-size: 2em;
+            }
+
+            .model-selection {
+                flex-direction: column;
+            }
+
+            .text-input-group {
+                flex-direction: column;
+            }
+
+            .text-input-group label {
+                min-width: auto;
+                padding-top: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔍 Plagiarism Detector</h1>
+            <p>Semantic Similarity Analyzer using Advanced Embedding Models</p>
+        </div>
+
+        <div class="main-content">
+            <div class="section">
+                <h2>📝 Text Input</h2>
+                <div class="text-inputs" id="textInputs">
+                    <div class="text-input-group">
+                        <label>Text 1:</label>
+                        <textarea placeholder="Enter your first text here..." data-text-id="1"></textarea>
+                        <button class="remove-btn" onclick="removeTextInput(this)" style="display: none;">×</button>
+                    </div>
+                    <div class="text-input-group">
+                        <label>Text 2:</label>
+                        <textarea placeholder="Enter your second text here..." data-text-id="2"></textarea>
+                        <button class="remove-btn" onclick="removeTextInput(this)" style="display: none;">×</button>
+                    </div>
+                </div>
+                <button class="add-text-btn" onclick="addTextInput()">+ Add Another Text</button>
+            </div>
+
+            <div class="section">
+                <h2>🤖 Select Embedding Models</h2>
+                <div class="model-selection">
+                    <div class="model-checkbox">
+                        <input type="checkbox" id="sentence_transformers" value="sentence_transformers" checked>
+                        <label for="sentence_transformers">Sentence Transformers</label>
+                    </div>
+                    <div class="model-checkbox">
+                        <input type="checkbox" id="openai" value="openai">
+                        <label for="openai">OpenAI Embeddings</label>
+                    </div>
+                    <div class="model-checkbox">
+                        <input type="checkbox" id="nomic" value="nomic">
+                        <label for="nomic">Nomic Embed</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section">
+                <button class="analyze-btn" onclick="analyzeTexts()">🔍 Analyze for Plagiarism</button>
+            </div>
+
+            <div class="results" id="results"></div>
+
+            <div class="documentation">
+                <h3>📚 How Embeddings Detect Plagiarism</h3>
+                <ul>
+                    <li><strong>Embeddings:</strong> Convert text into numerical vectors that capture semantic meaning</li>
+                    <li><strong>Cosine Similarity:</strong> Measures the angle between vectors (0-1 scale, where 1 is identical)</li>
+                    <li><strong>Threshold Detection:</strong> Texts with >80% similarity are flagged as potential clones</li>
+                    <li><strong>Model Comparison:</strong> Different models may capture different aspects of similarity</li>
+                    <li><strong>Semantic Understanding:</strong> Detects paraphrasing and meaning-based similarities, not just word matches</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let textCounter = 2;
+
+        function addTextInput() {
+            textCounter++;
+            const textInputs = document.getElementById('textInputs');
+            const newInputGroup = document.createElement('div');
+            newInputGroup.className = 'text-input-group';
+            newInputGroup.innerHTML = `
+                <label>Text ${textCounter}:</label>
+                <textarea placeholder="Enter your text here..." data-text-id="${textCounter}"></textarea>
+                <button class="remove-btn" onclick="removeTextInput(this)">×</button>
+            `;
+            textInputs.appendChild(newInputGroup);
+            updateRemoveButtons();
+        }
+
+        function removeTextInput(button) {
+            const inputGroup = button.parentElement;
+            inputGroup.remove();
+            updateRemoveButtons();
+        }
+
+        function updateRemoveButtons() {
+            const inputGroups = document.querySelectorAll('.text-input-group');
+            inputGroups.forEach((group, index) => {
+                const removeBtn = group.querySelector('.remove-btn');
+                if (inputGroups.length > 2) {
+                    removeBtn.style.display = 'flex';
+                } else {
+                    removeBtn.style.display = 'none';
+                }
+            });
+        }
+
+        function getSelectedModels() {
+            const checkboxes = document.querySelectorAll('input[type="checkbox"]:checked');
+            return Array.from(checkboxes).map(cb => cb.value);
+        }
+
+        function getTexts() {
+            const textareas = document.querySelectorAll('textarea');
+            return Array.from(textareas).map(ta => ta.value.trim()).filter(text => text);
+        }
+
+        function analyzeTexts() {
+            const texts = getTexts();
+            const models = getSelectedModels();
+
+            if (texts.length < 2) {
+                alert('Please enter at least 2 texts for comparison.');
+                return;
+            }
+
+            if (models.length === 0) {
+                alert('Please select at least one embedding model.');
+                return;
+            }
+
+            const analyzeBtn = document.querySelector('.analyze-btn');
+            analyzeBtn.disabled = true;
+            analyzeBtn.textContent = '🔄 Analyzing...';
+
+            const resultsDiv = document.getElementById('results');
+            resultsDiv.innerHTML = '<div class="loading">Analyzing texts with selected models...</div>';
+
+            fetch('/analyze', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    texts: texts,
+                    models: models
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                displayResults(data);
+                analyzeBtn.disabled = false;
+                analyzeBtn.textContent = '🔍 Analyze for Plagiarism';
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                resultsDiv.innerHTML = '<div class="error">Error analyzing texts. Please try again.</div>';
+                analyzeBtn.disabled = false;
+                analyzeBtn.textContent = '🔍 Analyze for Plagiarism';
+            });
+        }
+
+        function displayResults(data) {
+            const resultsDiv = document.getElementById('results');
+            
+            if (data.error) {
+                resultsDiv.innerHTML = `<div class="error">${data.error}</div>`;
+                return;
+            }
+
+            let html = '<h2>📊 Analysis Results</h2>';
+
+            Object.entries(data.results).forEach(([modelName, result]) => {
+                if (result.error) {
+                    html += `
+                        <div class="model-result">
+                            <h3>${result.model_info?.name || modelName}</h3>
+                            <div class="error">Error: ${result.error}</div>
+                        </div>
+                    `;
+                    return;
+                }
+
+                html += `
+                    <div class="model-result">
+                        <h3>${result.model_info.name}</h3>
+                        <div class="model-info">
+                            <strong>Description:</strong> ${result.model_info.description}<br>
+                            <strong>Context Length:</strong> ${result.model_info.context_length} tokens<br>
+                            <strong>Dimensions:</strong> ${result.model_info.dimensions}
+                        </div>
+                        
+                        <h4>Similarity Matrix</h4>
+                        <div class="similarity-matrix">
+                            ${generateSimilarityTable(result.similarity_matrix, data.texts)}
+                        </div>
+                        
+                        <div class="clones-section">
+                            <h4>🚨 Potential Clones (>80% similarity)</h4>
+                            ${generateClonesDisplay(result.clones, data.texts)}
+                        </div>
+                    </div>
+                `;
+            });
+
+            resultsDiv.innerHTML = html;
+        }
+
+        function generateSimilarityTable(matrix, texts) {
+            let html = '<table class="similarity-table"><thead><tr><th>Text</th>';
+            
+            for (let i = 0; i < texts.length; i++) {
+                html += `<th>Text ${i + 1}</th>`;
+            }
+            html += '</tr></thead><tbody>';
+
+            for (let i = 0; i < matrix.length; i++) {
+                html += `<tr><td><strong>Text ${i + 1}</strong></td>`;
+                for (let j = 0; j < matrix[i].length; j++) {
+                    const similarity = matrix[i][j];
+                    const percentage = Math.round(similarity * 100);
+                    let className = 'similarity-cell ';
+                    
+                    if (similarity >= 0.8) {
+                        className += 'similarity-high';
+                    } else if (similarity >= 0.6) {
+                        className += 'similarity-medium';
+                    } else {
+                        className += 'similarity-low';
+                    }
+                    
+                    html += `<td class="${className}">${percentage}%</td>`;
+                }
+                html += '</tr>';
+            }
+
+            html += '</tbody></table>';
+            return html;
+        }
+
+        function generateClonesDisplay(clones, texts) {
+            if (clones.length === 0) {
+                return '<p>✅ No potential clones detected (similarity < 80%)</p>';
+            }
+
+            let html = '';
+            clones.forEach(clone => {
+                const percentage = Math.round(clone.similarity * 100);
+                html += `
+                    <div class="clone-item">
+                        <div class="similarity-score">Similarity: ${percentage}%</div>
+                        <div><strong>Text ${clone.text1_index + 1}:</strong> ${texts[clone.text1_index].substring(0, 100)}...</div>
+                        <div><strong>Text ${clone.text2_index + 1}:</strong> ${texts[clone.text2_index].substring(0, 100)}...</div>
+                    </div>
+                `;
+            });
+
+            return html;
+        }
+
+        // Initialize remove buttons visibility
+        updateRemoveButtons();
+    </script>
+</body>
+</html> 
